@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thêm Học Viên</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@500&display=swap" rel="stylesheet" />
+  <link rel="icon" href="./favicon_io/android-chrome-512x512.png" type="image/x-icon" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+
+    header {
+      background: linear-gradient(135deg, #007bff, #00c6ff);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.5em;
+    }
+
+    .form-container {
+      width: 80%;
+      max-width: 600px;
+      margin: 50px auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #007bff;
+    }
+
+    .form-container input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+
+    .form-container button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.1em;
+      cursor: pointer;
+    }
+
+    .form-container button:hover {
+      background-color: #0056b3;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      background-color: #007bff;
+      color: rgb(255, 255, 255);
+      font-size: 1em;
+    }
+
+    .back-btn-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .back-btn-container a {
+      text-decoration: none;
+    }
+
+    .back-btn-container button {
+      padding: 12px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .back-btn-container button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Thêm Học Viên</h1>
+  </header>
+
+  <div class="form-container">
+    <h2>Thông Tin Học Viên</h2>
+    <form id="studentForm">
+      <label for="studentName">Tên:</label>
+      <input type="text" id="studentName" placeholder="Nhập tên học viên" required />
+
+      <label for="studentEmail">Email:</label>
+      <input type="email" id="studentEmail" placeholder="Nhập email học viên" required />
+
+      <label for="studentCourse">Khóa Học:</label>
+      <input type="text" id="studentCourse" placeholder="Nhập khóa học" required />
+
+      <label for="studentPhone">Số Điện Thoại:</label>
+      <input type="text" id="studentPhone" placeholder="Nhập số điện thoại" required />
+
+      <button type="submit">Thêm Học Viên</button>
+    </form>
+  </div>
+    <!-- Nút trở về Trang Chính -->
+  <div class="back-btn-container">
+    <button onclick="window.location.href='indexadmin.html'">
+      Trở Về Trang Chính
+    </button>
+  </div>
+  <div class="back-btn-container">
+    <button onclick="window.location.href='danhsachhv.html'">
+      Trở Về Trang Danh Sách Học Viên
+    </button>
+  </div>
+
+  <footer>
+    © 2024 Quản Lý Dịch Vụ Gia Sư. Tất cả các quyền được bảo lưu.
+  </footer>
+
+  <script>
+    document.getElementById('studentForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('studentName').value;
+      const email = document.getElementById('studentEmail').value;
+      const course = document.getElementById('studentCourse').value;
+      const phone = document.getElementById('studentPhone').value;
+
+      if (name && email && course && phone) {
+        // Lấy danh sách học viên hiện tại từ localStorage, nếu không có thì tạo mảng mới
+        let students = JSON.parse(localStorage.getItem('students')) || [];
+        
+        // Thêm học viên mới vào danh sách
+        students.push({
+          name: name,
+          email: email,
+          course: course,
+          phone: phone
+        });
+
+        // Lưu lại danh sách học viên vào localStorage
+        localStorage.setItem('students', JSON.stringify(students));
+
+        alert('Học viên đã được thêm thành công!');
+        // Quay lại trang danh sách học viên
+        window.location.href = 'danhsachhv.html';
+      } else {
+        alert('Vui lòng điền đầy đủ thông tin!');
+      }
+    });
+  </script>
+</body>
+</html>

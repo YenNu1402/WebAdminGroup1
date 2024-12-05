@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Người Dùng</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+      display: flex;
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      width: 120px;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    .form-group input,
+    .form-group select {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .form-group button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    .form-group button:hover {
+      background-color: #0056b3;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    table th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .btn-edit {
+      background-color: #ffc107;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .btn-delete {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .btn-disable {
+      background-color: #6c757d;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .btn-edit:hover { background-color: #e0a800; }
+    .btn-delete:hover { background-color: #c82333; }
+    .btn-disable:hover { background-color: #5a6268; }
+
+    .search-bar {
+      margin-bottom: 20px;
+    }
+
+    .search-bar input {
+      padding: 8px;
+      width: calc(100% - 120px);
+      margin-right: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .search-bar select {
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .btn-back {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+
+    .btn-back:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Quản Lý Người Dùng</h1>
+  </header>
+
+  <div class="container">
+    <h2>Thêm Mới Người Dùng</h2>
+    <form id="addUserForm">
+      <div class="form-group">
+        <label for="name">Tên:</label>
+        <input type="text" id="name" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" required>
+      </div>
+      <div class="form-group">
+        <label for="role">Vai Trò:</label>
+        <select id="role" required>
+          <option value="sinh viên">Sinh Viên</option>
+          <option value="giáo viên">Giáo Viên</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <button type="submit">Thêm Người Dùng</button>
+      </div>
+    </form>
+
+    <div class="search-bar">
+      <input type="text" id="search" placeholder="Tìm kiếm theo tên hoặc email...">
+      <select id="filterRole">
+        <option value="">Tất cả vai trò</option>
+        <option value="sinh viên">Sinh Viên</option>
+        <option value="giáo viên">Giáo Viên</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Tên</th>
+          <th>Email</th>
+          <th>Vai Trò</th>
+          <th>Trạng Thái</th>
+          <th>Hành Động</th>
+        </tr>
+      </thead>
+      <tbody id="userTableBody">
+        <!-- Người dùng sẽ được thêm tại đây -->
+      </tbody>
+    </table>
+
+    <!-- Nút quay lại trang chính -->
+    <button class="btn-back" onclick="window.location.href='indexadmin.html'">Quay lại trang chính</button>
+  </div>
+
+  <script>
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    const userTableBody = document.getElementById("userTableBody");
+
+    function saveToLocalStorage() {
+      localStorage.setItem("users", JSON.stringify(users));
+    }
+
+    function renderUsers() {
+      userTableBody.innerHTML = "";
+      users.forEach((user, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td>${user.role}</td>
+          <td>${user.status}</td>
+          <td>
+            <button class="btn-edit" onclick="editUser(${index})">Sửa</button>
+            <button class="btn-delete" onclick="deleteUser(${index})">Xóa</button>
+            <button class="btn-disable" onclick="disableUser(${index})">${user.status === "Kích Hoạt" ? "Vô Hiệu" : "Kích Hoạt"}</button>
+          </td>
+        `;
+        userTableBody.appendChild(row);
+      });
+    }
+
+    function addUser(event) {
+      event.preventDefault();
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const role = document.getElementById("role").value;
+
+      users.push({ name, email, role, status: "Kích Hoạt" });
+      saveToLocalStorage();
+      renderUsers();
+      document.getElementById("addUserForm").reset();
+    }
+
+    function editUser(index) {
+      const user = users[index];
+      const newName = prompt("Tên mới:", user.name) || user.name;
+      const newEmail = prompt("Email mới:", user.email) || user.email;
+      const newRole = prompt("Vai trò mới (sinh viên/giáo viên/admin):", user.role) || user.role;
+
+      users[index] = { ...user, name: newName, email: newEmail, role: newRole };
+      saveToLocalStorage();
+      renderUsers();
+    }
+
+    function deleteUser(index) {
+      if (confirm("Bạn có chắc chắn muốn xóa người dùng này?")) {
+        users.splice(index, 1);
+        saveToLocalStorage();
+        renderUsers();
+      }
+    }
+
+    function disableUser(index) {
+      users[index].status = users[index].status === "Kích Hoạt" ? "Vô Hiệu Hóa" : "Kích Hoạt";
+      saveToLocalStorage();
+      renderUsers();
+    }
+
+    function filterUsers() {
+      const search = document.getElementById("search").value.toLowerCase();
+      const filterRole = document.getElementById("filterRole").value;
+
+      const filteredUsers = users.filter(user => {
+        const matchesSearch = user.name.toLowerCase().includes(search) || user.email.toLowerCase().includes(search);
+        const matchesRole = filterRole ? user.role === filterRole : true;
+        return matchesSearch && matchesRole;
+      });
+
+      userTableBody.innerHTML = "";
+      filteredUsers.forEach((user, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td>${user.role}</td>
+          <td>${user.status}</td>
+          <td>
+            <button class="btn-edit" onclick="editUser(${index})">Sửa</button>
+            <button class="btn-delete" onclick="deleteUser(${index})">Xóa</button>
+            <button class="btn-disable" onclick="disableUser(${index})">${user.status === "Kích Hoạt" ? "Vô Hiệu" : "Kích Hoạt"}</button>
+          </td>
+        `;
+        userTableBody.appendChild(row);
+      });
+    }
+
+    document.getElementById("addUserForm").addEventListener("submit", addUser);
+    document.getElementById("search").addEventListener("input", filterUsers);
+    document.getElementById("filterRole").addEventListener("change", filterUsers);
+
+    renderUsers();
+  </script>
+</body>
+</html>

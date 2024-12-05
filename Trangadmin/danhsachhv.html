@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Danh Sách Học Viên</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@500&display=swap" rel="stylesheet" />
+  <link rel="icon" href="./favicon_io/android-chrome-512x512.png" type="image/x-icon" />
+  <style>
+    /* Phần CSS không thay đổi */
+    body {
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 15px 0;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    table th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    table tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .btn {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .btn-add {
+      background-color: #007bff; /* Xanh nước biển */
+      color: white; /* Chữ màu trắng */
+      margin-bottom: 15px;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .btn-add:hover {
+      background-color: #0056b3; /* Màu khi di chuột */
+    }
+
+    .back-btn-container {
+      text-align: left; /* Căn trái nút "Thêm Học Viên" */
+      margin-bottom: 10px; /* Khoảng cách dưới nút "Thêm Học Viên" */
+    }
+
+    .back-btn-container.center {
+      text-align: center; /* Căn giữa nút "Trở Về Trang Chính" */
+      margin-top: 20px; /* Khoảng cách trên nút "Trở Về Trang Chính" */
+    }
+
+    .back-btn-container button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .back-btn-container button:hover {
+      background-color: #0056b3;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      background-color: #007bff; /* Màu xanh nước biển */
+      color: white; /* Chữ màu trắng */
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Danh Sách Học Viên</h1>
+  </header>
+
+  <div class="container">
+    <!-- Di chuyển nút "Thêm Học Viên" lên góc trái trên bảng -->
+    <div class="back-btn-container">
+      <button onclick="window.location.href='addhocvien.html'">
+        Thêm Học Viên
+      </button>
+    </div>
+
+    <table class="student-table">
+      <thead>
+        <tr>
+          <th>Tên</th>
+          <th>Email</th>
+          <th>Khóa Học</th>
+          <th>Số Điện Thoại</th>
+          <th>Hành Động</th>
+        </tr>
+      </thead>
+      <tbody id="studentList">
+        <!-- Các học viên sẽ được thêm vào đây -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Căn giữa nút "Trở Về Trang Chính" -->
+  <div class="back-btn-container center">
+    <button onclick="window.location.href='indexadmin.html'">
+      Trở Về Trang Chính
+    </button>
+  </div>
+
+  <footer>
+    <p>© 2024 Quản Lý Dịch Vụ Gia Sư. Tất cả các quyền được bảo lưu.</p>
+  </footer>
+
+  <script>
+    // Hàm hiển thị danh sách học viên
+    function displayStudents() {
+      const studentList = document.getElementById('studentList');
+      // Lấy danh sách học viên từ localStorage
+      const students = JSON.parse(localStorage.getItem('students')) || [];
+
+      // Nếu không có học viên, hiển thị thông báo
+      if (students.length === 0) {
+        studentList.innerHTML = '<tr><td colspan="5" style="text-align: center;">Chưa có học viên nào. Vui lòng thêm học viên.</td></tr>';
+        return;
+      }
+
+      // Thêm các học viên vào bảng
+      studentList.innerHTML = '';
+      students.forEach((student, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${student.name}</td>
+          <td>${student.email}</td>
+          <td>${student.course}</td>
+          <td>${student.phone}</td>
+          <td>
+            <button class="btn" onclick="editStudent(${index})">Sửa</button>
+            <button class="btn" onclick="deleteStudent(${index})">Xóa</button>
+          </td>
+        `;
+        studentList.appendChild(row);
+      });
+    }
+
+    // Hàm xóa học viên
+    function deleteStudent(index) {
+      const students = JSON.parse(localStorage.getItem('students')) || [];
+      students.splice(index, 1); // Xóa học viên tại vị trí index
+      localStorage.setItem('students', JSON.stringify(students));
+      displayStudents(); // Cập nhật lại danh sách học viên
+    }
+
+    // Hàm sửa học viên
+    function editStudent(index) {
+      const url = new URL(window.location.href);
+      const params = new URLSearchParams(url.search);
+      params.set('index', index);
+      window.location.href = `editStudent.html?${params.toString()}`;
+    }
+
+    // Gọi hàm để hiển thị học viên khi trang được tải
+    displayStudents();
+  </script>
+
+</body>
+</html>

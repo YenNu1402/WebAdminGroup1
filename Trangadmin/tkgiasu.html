@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Tài Khoản Gia Sư</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+
+    header {
+      background-color: #007bff;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    table th {
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    table tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .btn {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .btn-edit {
+      background-color: #ffc107;
+      color: #fff;
+    }
+
+    .btn-edit:hover {
+      background-color: #e0a800;
+    }
+
+    .btn-delete {
+      background-color: #dc3545;
+      color: #fff;
+    }
+
+    .btn-delete:hover {
+      background-color: #c82333;
+    }
+
+    .back-btn-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .back-btn-container button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    .back-btn-container button:hover {
+      background-color: #0056b3;
+    }
+
+    footer {
+      text-align: center;
+      background-color: #007bff;
+      color: #fff;
+      padding: 10px 0;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Quản Lý Tài Khoản Gia Sư</h1>
+  </header>
+
+  <div class="container">
+    <table>
+      <thead>
+        <tr>
+          <th>Tên Gia Sư</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Password</th>
+          <th>Số Điện Thoại</th>
+          <th>Chuyên Môn</th>
+          <th>Hành Động</th>
+        </tr>
+      </thead>
+      <tbody id="tutorTableBody">
+        <!-- Dữ liệu gia sư sẽ được thêm vào ở đây -->
+      </tbody>
+    </table>
+
+    <div class="back-btn-container">
+      <button id="backBtn">Trở Về Trang Chính</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2024 Quản Lý Dịch Vụ Gia Sư. Tất cả các quyền được bảo lưu.</p>
+  </footer>
+
+  <script>
+    const defaultTutors = [
+      { name: "Nguyễn Văn A", username: "nguyenvana", email: "nguyenvana@gmail.com", password: "123456", phone: "0901234567", specialty: "Toán học" },
+      { name: "Trần Thị B", username: "tranthib", email: "tranthib@gmail.com", password: "abcdef", phone: "0902345678", specialty: "Vật lý" },
+      { name: "Lê Thị C", username: "lethic", email: "lethic@gmail.com", password: "789xyz", phone: "0903456789", specialty: "Hóa học" }
+    ];
+
+    let tutors = JSON.parse(localStorage.getItem("tutors")) || defaultTutors;
+    const tutorTableBody = document.getElementById("tutorTableBody");
+
+    function saveToLocalStorage() {
+      localStorage.setItem("tutors", JSON.stringify(tutors));
+    }
+
+    function renderTutors() {
+      tutorTableBody.innerHTML = "";
+      tutors.forEach((tutor, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${tutor.name}</td>
+          <td>${tutor.username}</td>
+          <td>${tutor.email}</td>
+          <td>${tutor.password}</td>
+          <td>${tutor.phone}</td>
+          <td>${tutor.specialty}</td>
+          <td>
+            <button class="btn btn-edit" data-index="${index}">Sửa</button>
+            <button class="btn btn-delete" data-index="${index}">Xóa</button>
+          </td>
+        `;
+        tutorTableBody.appendChild(row);
+      });
+
+      document.querySelectorAll(".btn-edit").forEach(btn =>
+        btn.addEventListener("click", () => editTutor(btn.dataset.index))
+      );
+      document.querySelectorAll(".btn-delete").forEach(btn =>
+        btn.addEventListener("click", () => deleteTutor(btn.dataset.index))
+      );
+    }
+
+    function editTutor(index) {
+      const tutor = tutors[index];
+      const newName = prompt("Nhập tên mới:", tutor.name) || tutor.name;
+      const newUsername = prompt("Nhập username mới:", tutor.username) || tutor.username;
+      const newEmail = prompt("Nhập email mới:", tutor.email) || tutor.email;
+      const newPassword = prompt("Nhập mật khẩu mới:", tutor.password) || tutor.password;
+      const newPhone = prompt("Nhập số điện thoại mới:", tutor.phone) || tutor.phone;
+      const newSpecialty = prompt("Nhập chuyên môn mới:", tutor.specialty) || tutor.specialty;
+
+      tutors[index] = { name: newName, username: newUsername, email: newEmail, password: newPassword, phone: newPhone, specialty: newSpecialty };
+      saveToLocalStorage();
+      renderTutors();
+      alert("Thông tin gia sư đã được cập nhật.");
+    }
+
+    function deleteTutor(index) {
+      if (confirm("Bạn có chắc chắn muốn xóa gia sư này?")) {
+        tutors.splice(index, 1);
+        saveToLocalStorage();
+        renderTutors();
+        alert("Tài khoản gia sư đã bị xóa.");
+      }
+    }
+
+    document.getElementById("backBtn").addEventListener("click", () => {
+      window.location.href = "indexadmin.html";
+    });
+
+    renderTutors();
+  </script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản Lý Thanh Toán</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    header {
+      background: #007bff;
+      color: #fff;
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    table th {
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    table tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .btn {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .btn-add {
+      background-color: #28a745;
+      color: #fff;
+      margin-bottom: 15px;
+    }
+
+    .btn-add:hover {
+      background-color: #218838;
+    }
+
+    .btn-edit {
+      background-color: #ffc107;
+      color: #fff;
+    }
+
+    .btn-edit:hover {
+      background-color: #e0a800;
+    }
+
+    .btn-delete {
+      background-color: #dc3545;
+      color: #fff;
+    }
+
+    .btn-delete:hover {
+      background-color: #c82333;
+    }
+
+    .back-btn-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .back-btn-container button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    .back-btn-container button:hover {
+      background-color: #0056b3;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #007bff;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Quản Lý Thanh Toán</h1>
+  </header>
+
+  <div class="container">
+    <!-- Button thêm thanh toán -->
+    <button class="btn btn-add" onclick="window.location.href='addthanhtoan.html'">Thêm Thanh Toán</button>
+
+    <!-- Bảng danh sách thanh toán -->
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Tên Người Thanh Toán</th>
+          <th>Ngày</th>
+          <th>Số Tiền</th>
+          <th>Trạng Thái</th>
+          <th>Hành Động</th>
+        </tr>
+      </thead>
+      <tbody id="paymentList">
+        <!-- Dữ liệu thanh toán sẽ được thêm vào đây -->
+      </tbody>
+    </table>
+    <div class="back-btn-container">
+      <button onclick="window.location.href='indexadmin.html'">Trở Về Trang Chính</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2024 Quản Lý Dịch Vụ Gia Sư. Tất cả các quyền được bảo lưu.</p>
+  </footer>
+
+  <script>
+    function displayPayments() {
+      const paymentList = document.getElementById('paymentList');
+      const payments = JSON.parse(localStorage.getItem('payments')) || [];
+
+      if (payments.length === 0) {
+        paymentList.innerHTML = '<tr><td colspan="6">Chưa có thanh toán nào.</td></tr>';
+        return;
+      }
+
+      paymentList.innerHTML = '';
+      payments.forEach((payment, index) => {
+        const row = `
+          <tr>
+            <td>${payment.id}</td>
+            <td>${payment.name}</td>
+            <td>${payment.date}</td>
+            <td>${payment.amount}</td>
+            <td>${payment.status}</td>
+            <td>
+              <button class="btn btn-edit" onclick="editPayment(${index})">Sửa</button>
+              <button class="btn btn-delete" onclick="deletePayment(${index})">Xóa</button>
+            </td>
+          </tr>
+        `;
+        paymentList.innerHTML += row;
+      });
+    }
+
+    function editPayment(index) {
+      // Điều hướng sang trang editpayment.html với tham số index
+      window.location.href = `editthanhtoan.html?index=${index}`;
+    }
+
+    function deletePayment(index) {
+      const payments = JSON.parse(localStorage.getItem('payments')) || [];
+      if (confirm('Bạn có chắc chắn muốn xóa giao dịch này?')) {
+        payments.splice(index, 1);
+        localStorage.setItem('payments', JSON.stringify(payments));
+        displayPayments();
+      }
+    }
+
+    displayPayments();
+  </script>
+</body>
+</html>

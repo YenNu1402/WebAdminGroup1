@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Khiếu Nại và Hỗ Trợ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+
+    header {
+      background-color: #007bff;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #007bff;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      border-left: 5px solid #007bff;
+      padding-left: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    table th {
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    table tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .btn {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .btn-view {
+      background-color: #17a2b8;
+      color: #fff;
+    }
+
+    .btn-view:hover {
+      background-color: #138496;
+    }
+
+    .btn-update {
+      background-color: #28a745;
+      color: #fff;
+    }
+
+    .btn-update:hover {
+      background-color: #218838;
+    }
+
+    .form-container {
+      display: none;
+      margin-bottom: 20px;
+    }
+
+    .form-container form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .form-container textarea, .form-container select {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .form-container button {
+      padding: 10px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .form-container button:hover {
+      background-color: #0056b3;
+    }
+
+    .back-btn-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .back-btn-container button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .back-btn-container button:hover {
+      background-color: #0056b3;
+    }
+    .filter-container {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: 20px;
+     gap: 10px;
+    }
+
+   .filter-container input,
+   .filter-container select {
+     padding: 10px;
+     border: 1px solid #ccc;
+     border-radius: 5px;
+     font-size: 1rem;
+     flex: 1; /* Để các bộ lọc có cùng chiều rộng */
+   }
+
+   .filter-container input {
+     max-width: 300px; /* Giới hạn độ rộng của ô tìm kiếm */
+   }
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Quản Lý Khiếu Nại và Hỗ Trợ</h1>
+  </header>
+  <div class="container">
+    <h2>Danh Sách Khiếu Nại</h2>
+    <div class="filter-container">
+      <input type="text" id="nameFilter" placeholder="Tìm tên..." oninput="displayComplaints()" />
+      <select id="roleFilter" onchange="displayComplaints()">
+        <option value="Tất cả">Tất cả</option>
+        <option value="Học viên">Học viên</option>
+        <option value="Giảng viên">Giảng viên</option>
+      </select>
+      <select id="statusFilter" onchange="displayComplaints()">
+        <option value="Tất cả">Tất cả</option>
+        <option value="Đang Xử Lý">Đang Xử Lý</option>
+        <option value="Đã Giải Quyết">Đã Giải Quyết</option>
+        <option value="Đã Đóng">Đã Đóng</option>
+      </select>
+    </div>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Tên Người Dùng</th>
+          <th>Vai Trò</th>
+          <th>Thời Gian</th>
+          <th>Nội Dung</th>
+          <th>Trạng Thái</th>
+          <th>Hành Động</th>
+        </tr>
+      </thead>
+      <tbody id="complaintList">
+        <!-- Dữ liệu khiếu nại sẽ được tải tại đây -->
+      </tbody>
+    </table>
+
+    <div class="form-container" id="complaintFormContainer">
+      <form id="complaintForm">
+        <h3>Chi Tiết Khiếu Nại</h3>
+        <textarea id="complaintDetail" rows="4" placeholder="Nội dung chi tiết" readonly></textarea>
+        <label for="status">Cập Nhật Trạng Thái:</label>
+        <select id="status">
+          <option value="Đang Xử Lý">Đang Xử Lý</option>
+          <option value="Đã Giải Quyết">Đã Giải Quyết</option>
+          <option value="Đã Đóng">Đã Đóng</option>
+        </select>
+        <button type="submit">Cập Nhật</button>
+      </form>
+      
+    </div>
+
+    <div class="back-btn-container">
+      <button onclick="window.location.href='indexadmin.html'">Trở Về Trang Chính</button>
+    </div>
+  </div>
+
+  <script>
+    const complaints = [
+      { id: 1, name: "Nguyễn Văn A", role: "Học viên", time: "29/11/2024", content: "Không hài lòng với gia sư", status: "Đang Xử Lý" },
+      { id: 2, name: "Trần Thị B", role: "Giảng viên", time: "30/11/2024", content: "Gia sư đến trễ", status: "Đã Giải Quyết" },
+      { id: 3, name: "Phạm Văn C", role: "Học viên", time: "01/12/2024", content: "Dịch vụ hỗ trợ chậm", status: "Đang Xử Lý" },
+      { id: 4, name: "Lê Thị D", role: "Học viên", time: "02/12/2024", content: "Không hài lòng với khoá học", status: "Đang Xử Lý" },
+      { id: 5, name: "Phạm Thị E", role: "Giảng viên", time: "03/12/2024", content: "Chậm tiến độ", status: "Đang Xử Lý" },
+      { id: 6, name: "Vũ Minh F", role: "Học viên", time: "04/12/2024", content: "Cần cải thiện chất lượng học liệu", status: "Chưa Xử Lý" },
+      { id: 7, name: "Đặng Thị G", role: "Giảng viên", time: "05/12/2024", content: "Không nhận được tài liệu giảng dạy đúng hạn", status: "Đang Xử Lý" },
+      { id: 8, name: "Ngô Xuân H", role: "Học viên", time: "06/12/2024", content: "Phản ánh về thái độ của gia sư", status: "Đang Xử Lý" },
+      { id: 9, name: "Lê Minh I", role: "Giảng viên", time: "07/12/2024", content: "Chưa nhận được phản hồi từ hệ thống", status: "Chưa Giải Quyết" },
+      { id: 10, name: "Hoàng Thị K", role: "Học viên", time: "08/12/2024", content: "Bài giảng không dễ hiểu", status: "Đang Xử Lý" },
+      { id: 11, name: "Nguyễn Thị L", role: "Giảng viên", time: "09/12/2024", content: "Chất lượng học liệu không đạt yêu cầu", status: "Chưa Xử Lý" },
+      { id: 12, name: "Bùi Minh M", role: "Học viên", time: "10/12/2024", content: "Mất kết nối internet trong buổi học", status: "Đang Xử Lý" },
+      { id: 13, name: "Lê Quốc N", role: "Giảng viên", time: "11/12/2024", content: "Lịch học thay đổi mà không thông báo trước", status: "Đã Giải Quyết" },
+      { id: 14, name: "Trần Văn O", role: "Học viên", time: "12/12/2024", content: "Không nhận được bài giảng sau mỗi buổi học", status: "Đang Xử Lý" },
+      { id: 15, name: "Phan Thị P", role: "Giảng viên", time: "13/12/2024", content: "Lỗi kỹ thuật khi sử dụng nền tảng học online", status: "Chưa Giải Quyết" },
+      { id: 16, name: "Vũ Minh Q", role: "Học viên", time: "14/12/2024", content: "Gia sư không trả lời tin nhắn kịp thời", status: "Đang Xử Lý" },
+      { id: 17, name: "Nguyễn Thị R", role: "Giảng viên", time: "15/12/2024", content: "Khó khăn trong việc tìm kiếm tài liệu hỗ trợ", status: "Chưa Xử Lý" },
+      { id: 18, name: "Bùi Quốc S", role: "Học viên", time: "16/12/2024", content: "Chất lượng video giảng dạy kém", status: "Đang Xử Lý" },
+      { id: 19, name: "Trần Minh T", role: "Giảng viên", time: "17/12/2024", content: "Không có đủ thời gian để chuẩn bị bài giảng", status: "Đang Xử Lý" },
+      { id: 20, name: "Lê Thị U", role: "Học viên", time: "18/12/2024", content: "Không tìm thấy khóa học phù hợp", status: "Chưa Giải Quyết" }
+    ];
+
+  
+    const complaintList = document.getElementById("complaintList");
+  
+    function displayComplaints() {
+      const nameFilter = document.getElementById("nameFilter").value.toLowerCase();
+      const roleFilter = document.getElementById("roleFilter").value;
+      const statusFilter = document.getElementById("statusFilter").value;
+  
+      // Áp dụng bộ lọc cho dữ liệu
+      const filteredComplaints = complaints.filter(complaint => {
+        const matchesName = complaint.name.toLowerCase().includes(nameFilter);
+        const matchesRole = roleFilter === "Tất cả" || complaint.role === roleFilter;
+        const matchesStatus = statusFilter === "Tất cả" || complaint.status === statusFilter;
+        return matchesName && matchesRole && matchesStatus;
+      });
+  
+      // Cập nhật bảng hiển thị
+      complaintList.innerHTML = filteredComplaints.map((complaint, index) => `
+        <tr>
+          <td>${complaint.id}</td>
+          <td>${complaint.name}</td>
+          <td>${complaint.role}</td>
+          <td>${complaint.time}</td>
+          <td>${complaint.content}</td>
+          <td>${complaint.status}</td>
+          <td>
+            <button class="btn btn-view" onclick="viewComplaint(${index})">Xem</button>
+            <button class="btn btn-delete" onclick="deleteComplaint(${index})">Xóa</button>
+          </td>
+        </tr>
+      `).join("");
+    }
+  
+    // Hàm "Xem khiếu nại"
+    function viewComplaint(index) {
+      const complaint = complaints[index];
+      document.getElementById("complaintDetail").value = complaint.content;
+      document.getElementById("status").value = complaint.status;
+      document.getElementById("complaintFormContainer").style.display = "block";
+    }
+  
+    // Hàm "Xóa khiếu nại"
+    function deleteComplaint(index) {
+      if (confirm("Bạn có chắc chắn muốn xóa khiếu nại này?")) {
+        complaints.splice(index, 1);
+        displayComplaints(); // Cập nhật lại danh sách
+      }
+    }
+  
+    // Xử lý cập nhật trạng thái
+    document.getElementById("complaintForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const index = complaints.findIndex(c => c.id === parseInt(document.getElementById("complaintDetail").dataset.id));
+      if (index !== -1) {
+        complaints[index].status = document.getElementById("status").value;
+        alert("Cập nhật trạng thái thành công!");
+        displayComplaints();
+      }
+      document.getElementById("complaintFormContainer").style.display = "none";
+    });
+  
+    // Khởi tạo hiển thị ban đầu
+    displayComplaints();
+  </script>  
+</body>
+</html>

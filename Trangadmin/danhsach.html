@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Danh Sách Gia Sư</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Phần CSS không thay đổi */
+    body {
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 15px 0;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    h2 {
+    text-align: center;
+    color: #007bff; /* Xanh nước biển */
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    border-left: 5px solid #007bff;
+    padding-left: 10px;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    table th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    table tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .btn {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .btn-add {
+      background-color: #007bff; /* Xanh nước biển */
+      color: white; /* Chữ màu trắng */
+      margin-bottom: 15px;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .btn-add:hover {
+      background-color: #0056b3; /* Màu khi di chuột */
+    }
+
+    .back-btn-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .back-btn-container button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .back-btn-container button:hover {
+      background-color: #0056b3;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      background-color: #007bff; /* Màu xanh nước biển */
+      color: white; /* Chữ màu trắng */
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Danh Sách Gia Sư</h1>
+  </header>
+  <div class="container">
+    <a href="Addgiasu.html" class="btn btn-add">Thêm Gia Sư</a>
+    <table>
+      <thead>
+        <tr>
+          <th>Tên</th>
+          <th>Email</th>
+          <th>Chuyên Môn</th>
+          <th>Kinh Nghiệm (năm)</th>
+          <th>Hành Động</th>
+        </tr>
+      </thead>
+      <tbody id="tutorTableBody">
+        <!-- Danh sách gia sư sẽ hiển thị ở đây -->
+      </tbody>
+    </table>
+  </div>
+  <div class="back-btn-container">
+    <button onclick="window.location.href='indexadmin.html'">
+      Trở Về Trang Chính
+    </button>
+  </div>
+  
+  <footer>
+    <p>© 2024 Quản Lý Dịch Vụ Gia Sư. Tất cả các quyền được bảo lưu.</p>
+  </footer>
+
+  <script>
+    // Lấy danh sách gia sư từ localStorage
+    const tutors = JSON.parse(localStorage.getItem('tutors')) || [];
+  
+    // Lấy phần tử bảng
+    const tutorTableBody = document.getElementById("tutorTableBody");
+  
+    // Hàm hiển thị danh sách gia sư
+    function displayTutors() {
+      tutorTableBody.innerHTML = ""; // Xóa nội dung cũ
+      tutors.forEach((tutor, index) => {
+        const row = document.createElement("tr");
+  
+        row.innerHTML = `
+          <td>${tutor.name}</td>
+          <td>${tutor.email}</td>
+          <td>${tutor.specialty}</td>
+          <td>${tutor.experience}</td>
+          <td>
+            <button class="btn btn-edit" onclick="editTutor(${index})">Sửa</button>
+            <button class="btn btn-delete" onclick="deleteTutor(${index})">Xóa</button>
+          </td>
+        `;
+  
+        tutorTableBody.appendChild(row);
+      });
+    }
+  
+    // Hàm xóa gia sư
+    function deleteTutor(index) {
+      if (confirm("Bạn có chắc chắn muốn xóa?")) {
+        tutors.splice(index, 1); // Xóa gia sư trong mảng
+        // Lưu lại danh sách gia sư đã sửa vào localStorage
+        localStorage.setItem('tutors', JSON.stringify(tutors));
+        displayTutors(); // Hiển thị lại danh sách sau khi xóa
+      }
+    }
+  
+    // Hàm sửa gia sư
+    function editTutor(index) {
+      // Chuyển hướng đến trang sửa gia sư và truyền index
+      const url = new URL(window.location.href);
+      const params = new URLSearchParams(url.search);
+      params.set('index', index);
+      window.location.href = `editTutor.html?${params.toString()}`;
+    }
+  
+    // Hiển thị danh sách ban đầu
+    displayTutors();
+  </script>  
+</body>
+</html>

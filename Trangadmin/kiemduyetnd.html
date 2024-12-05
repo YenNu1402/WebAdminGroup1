@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kiểm Duyệt Nội Dung Bài Học</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+
+    header {
+      background-color: #007bff;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    table th {
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    table tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .btn {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .btn-approve {
+      background-color: #28a745;
+      color: #fff;
+    }
+
+    .btn-approve:hover {
+      background-color: #218838;
+    }
+
+    .btn-delete {
+      background-color: #dc3545;
+      color: #fff;
+    }
+
+    .btn-delete:hover {
+      background-color: #c82333;
+    }
+    .back-btn-container button {
+    background-color: #007bff; /* Màu xanh nước biển */
+    color: #fff; /* Màu chữ trắng */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    }
+
+    .back-btn-container button:hover {
+    background-color: #0056b3; /* Màu xanh nước biển đậm hơn khi hover */
+    }
+
+    .back-btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+    .back-btn-container button {
+    background-color: #007bff; /* Màu xanh nước biển */
+    color: #fff; /* Màu chữ trắng */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    }
+
+    .back-btn-container button:hover {
+    background-color: #0056b3; /* Màu xanh nước biển đậm hơn khi hover */
+    }
+
+    .filter-container {
+      margin-top: 20px; /* Thêm khoảng cách từ tiêu đề xuống */
+      margin-left: 0; /* Đảm bảo bộ lọc căn trái chính xác */
+      font-size: 18px; /* Tăng kích thước chữ */
+      display: flex; /* Để các phần tử được căn hàng ngang */
+      align-items: center; /* Căn phần tử theo chiều dọc */
+    }
+
+    .filter-container label {
+      font-weight: bold;
+      margin-right: 15px;
+    }
+
+    .filter-container select {
+      padding: 10px; /* Tăng kích thước bộ lọc */
+      font-size: 18px; /* Tăng cỡ chữ trong bộ lọc */
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Kiểm Duyệt Nội Dung Bài Học</h1>
+  </header>
+
+  <div class="filter-container">
+    <label for="statusFilter"></label>
+    <select id="statusFilter" onchange="filterLessons()">
+      <option value="all">Tất cả trạng thái</option>
+      <option value="Chờ duyệt">Chờ duyệt</option>
+      <option value="Đã duyệt">Đã duyệt</option>
+      <option value="Đã từ chối">Đã từ chối</option>
+    </select>
+  </div>
+
+  <div class="container">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Tiêu Đề Bài Học</th>
+          <th>Tác Giả</th>
+          <th>Thời Gian</th>
+          <th>Nội Dung</th>
+          <th>Trạng Thái</th>
+          <th>Hành Động</th>
+        </tr>
+      </thead>
+      <tbody id="lessonList">
+        <!-- Dữ liệu bài học -->
+      </tbody>
+    </table>
+    <div class="back-btn-container">
+        <button onclick="window.location.href='indexadmin.html'">Trở Về Trang Chính</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const lessonListEl = document.getElementById("lessonList");
+
+    // Dữ liệu mẫu
+    const sampleLessons = [
+    { id: 1, title: "Toán Học Cơ Bản", author: "Nguyễn Văn A", time: "25/11/2024", content: "Nội dung về các phép tính cơ bản.", status: "Chờ duyệt" },
+    { id: 2, title: "Hóa Học Hữu Cơ", author: "Trần Thị B", time: "29/11/2024", content: "Nội dung về hóa học hữu cơ.", status: "Chờ duyệt" },
+    { id: 3, title: "Vật Lý Lượng Tử", author: "Lê Minh C", time: "03/12/2024", content: "Nội dung về các nguyên lý vật lý lượng tử.", status: "Chờ duyệt" },
+    { id: 4, title: "Sinh Học Phân Tử", author: "Phạm Hồng D", time: "05/12/2024", content: "Nội dung về cấu trúc DNA và RNA.", status: "Đã duyệt" },
+    { id: 5, title: "Lịch Sử Việt Nam", author: "Nguyễn Thị E", time: "10/12/2024", content: "Nội dung về lịch sử các triều đại Việt Nam.", status: "Đã từ chối" },
+    { id: 6, title: "Kỹ Năng Lập Trình", author: "Nguyễn Thanh F", time: "15/12/2024", content: "Hướng dẫn học ngôn ngữ lập trình Java.", status: "Chờ duyệt" },
+    { id: 7, title: "Kỹ Thuật Thuyết Trình", author: "Trần Hoàng G", time: "18/12/2024", content: "Học cách thuyết trình chuyên nghiệp.", status: "Đã duyệt" },
+    { id: 8, title: "Công Nghệ Blockchain", author: "Nguyễn Thành H", time: "20/12/2024", content: "Nội dung về nền tảng công nghệ blockchain.", status: "Chờ duyệt" },
+    { id: 9, title: "Địa Lý Kinh Tế", author: "Lê Thị I", time: "22/12/2024", content: "Phân tích các khu vực kinh tế thế giới.", status: "Đã từ chối" },
+    { id: 10, title: "Nhiếp Ảnh Căn Bản", author: "Nguyễn Hải K", time: "25/12/2024", content: "Hướng dẫn chụp ảnh cơ bản cho người mới.", status: "Đã duyệt" },
+    { id: 11, title: "Chế Biến Món Ăn", author: "Phạm Hoàng L", time: "27/12/2024", content: "Các kỹ thuật nấu ăn cơ bản.", status: "Chờ duyệt" },
+    { id: 12, title: "Thiết Kế UX/UI", author: "Nguyễn Văn M", time: "01/01/2025", content: "Học cách thiết kế giao diện người dùng hiệu quả.", status: "Đã duyệt" },
+    { id: 13, title: "Tài Chính Cá Nhân", author: "Trần Phúc N", time: "03/01/2025", content: "Quản lý tài chính và lập ngân sách cá nhân.", status: "Đã từ chối" },
+    { id: 14, title: "Kiến Trúc Hiện Đại", author: "Nguyễn Thanh O", time: "05/01/2025", content: "Giới thiệu về phong cách kiến trúc hiện đại.", status: "Chờ duyệt" },
+    { id: 15, title: "Thể Thao Dinh Dưỡng", author: "Lê Hồng P", time: "10/01/2025", content: "Chế độ ăn uống cho người chơi thể thao.", status: "Đã duyệt" },
+    { id: 16, title: "Hướng Dẫn Đầu Tư", author: "Trần Thị Q", time: "12/01/2025", content: "Cách bắt đầu đầu tư cho người mới.", status: "Chờ duyệt" },
+    { id: 17, title: "Tâm Lý Học Ứng Dụng", author: "Nguyễn Văn R", time: "15/01/2025", content: "Ứng dụng tâm lý học vào đời sống.", status: "Đã từ chối" },
+    { id: 18, title: "Học Đàn Guitar", author: "Phạm Thanh S", time: "18/01/2025", content: "Các hợp âm cơ bản trên đàn guitar.", status: "Chờ duyệt" },
+    { id: 19, title: "Văn Học Hiện Đại", author: "Trần Minh T", time: "20/01/2025", content: "Các tác phẩm nổi bật trong văn học hiện đại.", status: "Đã duyệt" },
+    { id: 20, title: "Phát Triển Game", author: "Nguyễn Văn U", time: "22/01/2025", content: "Tạo game cơ bản bằng Unity.", status: "Đã từ chối" },
+    { id: 21, title: "Sáng Tạo Nội Dung", author: "Lê Thị V", time: "25/01/2025", content: "Học cách viết nội dung hấp dẫn.", status: "Chờ duyệt" },
+    { id: 22, title: "Tối Ưu Hóa SEO", author: "Nguyễn Hoàng W", time: "27/01/2025", content: "Cách tăng hiệu quả SEO cho website.", status: "Đã duyệt" },
+    { id: 23, title: "Học Photoshop", author: "Phạm Hải X", time: "30/01/2025", content: "Hướng dẫn cơ bản sử dụng Photoshop.", status: "Chờ duyệt" },
+    { id: 24, title: "Robot và Tự Động Hóa", author: "Nguyễn Văn Y", time: "02/02/2025", content: "Ứng dụng robot vào sản xuất hiện đại.", status: "Đã duyệt" },
+    { id: 25, title: "Kỹ Năng Làm Việc Nhóm", author: "Lê Hoàng Z", time: "05/02/2025", content: "Cách làm việc hiệu quả trong đội nhóm.", status: "Chờ duyệt" },
+    { id: 26, title: "Lập Kế Hoạch Dự Án", author: "Nguyễn Văn AA", time: "07/02/2025", content: "Các bước lập kế hoạch dự án chi tiết.", status: "Đã từ chối" },
+    { id: 27, title: "Cách Viết Email", author: "Phạm Hồng BB", time: "10/02/2025", content: "Viết email chuyên nghiệp cho công việc.", status: "Đã duyệt" },
+    { id: 28, title: "Học Tập Hiệu Quả", author: "Nguyễn Minh CC", time: "12/02/2025", content: "Kỹ thuật ghi nhớ và học tập hiệu quả.", status: "Chờ duyệt" },
+    { id: 29, title: "Lập Trình JavaScript", author: "Trần Thanh DD", time: "15/02/2025", content: "Lập trình web với JavaScript.", status: "Đã duyệt" },
+    { id: 30, title: "Thực Phẩm và Dinh Dưỡng", author: "Nguyễn Thị EE", time: "18/02/2025", content: "Tầm quan trọng của dinh dưỡng lành mạnh.", status: "Chờ duyệt" }
+];
+
+    // Lấy danh sách bài học từ localStorage hoặc dữ liệu mẫu
+    function getLessons() {
+      return JSON.parse(localStorage.getItem("lessons")) || sampleLessons;
+    }
+
+    // Lưu danh sách bài học vào localStorage
+    function saveLessons(lessons) {
+      localStorage.setItem("lessons", JSON.stringify(lessons));
+    }
+
+    // Hàm lọc bài học theo trạng thái
+    function filterLessons() {
+      const statusFilter = document.getElementById("statusFilter").value;
+      const lessons = getLessons();
+      const filteredLessons = statusFilter === "all"
+        ? lessons
+        : lessons.filter(lesson => lesson.status === statusFilter);
+
+      // Hiển thị danh sách bài học đã lọc
+      lessonListEl.innerHTML = filteredLessons.length
+        ? filteredLessons.map((lesson, index) => `
+            <tr>
+              <td>${lesson.id}</td>
+              <td>${lesson.title}</td>
+              <td>${lesson.author}</td>
+              <td>${lesson.time}</td>
+              <td>${lesson.content}</td>
+              <td>${lesson.status}</td>
+              <td>
+                ${lesson.status === "Chờ duyệt" ? `<button class="btn btn-approve" onclick="approveLesson(${index})">Duyệt</button>` : ""}
+                <button class="btn btn-delete" onclick="deleteLesson(${index})">Xóa</button>
+              </td>
+            </tr>
+          `).join("")
+        : `<tr><td colspan="7">Không có bài học nào trong trạng thái "${statusFilter}".</td></tr>`;
+    }
+
+    // Hiển thị danh sách bài học
+    function displayLessons() {
+      const lessons = getLessons();
+      lessonListEl.innerHTML = lessons.length
+        ? lessons.map((lesson, index) => `
+            <tr>
+              <td>${lesson.id}</td>
+              <td>${lesson.title}</td>
+              <td>${lesson.author}</td>
+              <td>${lesson.time}</td>
+              <td>${lesson.content}</td>
+              <td>${lesson.status}</td>
+              <td>
+                ${lesson.status === "Chờ duyệt" ? `<button class="btn btn-approve" onclick="approveLesson(${index})">Duyệt</button>` : ""}
+                <button class="btn btn-delete" onclick="deleteLesson(${index})">Xóa</button>
+              </td>
+            </tr>
+          `).join("")
+        : `<tr><td colspan="6">Không có bài học nào cần kiểm duyệt.</td></tr>`;
+    }
+
+    // Duyệt bài học
+    function approveLesson(index) {
+      const lessons = getLessons();
+      lessons[index].status = "Đã duyệt";
+      saveLessons(lessons);
+      alert("Bài học đã được duyệt!");
+      displayLessons();
+    }
+
+    // Xóa bài học
+    function deleteLesson(index) {
+      const lessons = getLessons();
+      if (confirm("Bạn có chắc chắn muốn xóa bài học này?")) {
+        lessons.splice(index, 1);
+        saveLessons(lessons);
+        alert("Bài học đã được xóa!");
+        displayLessons();
+      }
+    }
+
+    // Hiển thị bài học khi tải trang
+    saveLessons(sampleLessons); // Lưu dữ liệu mẫu vào localStorage
+    displayLessons();
+    document.getElementById("statusFilter").value = "all"; // Đặt mặc định hiển thị tất cả
+    filterLessons(); // Áp dụng bộ lọc
+  </script>
+</body>
+</html>

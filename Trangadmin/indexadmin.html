@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản Lý Người Dùng</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@500&display=swap" rel="stylesheet" />
+  <link rel="icon" href="./favicon_io/android-chrome-512x512.png" type="image/x-icon" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+
+    header {
+      background: linear-gradient(135deg, #007bff, #00c6ff);
+      color: white;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin-top: 20px;
+    }
+
+    nav ul li {
+      position: relative;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      padding: 12px 25px;
+      border-radius: 30px;
+      font-weight: 500;
+      transition: background-color 0.3s ease, transform 0.2s;
+    }
+
+    nav ul li a:hover {
+      background-color: #ffde59;
+      color: #333;
+      transform: scale(1.05);
+    }
+
+    nav ul li .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 200px;
+      box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    nav ul li:hover .dropdown-content {
+      display: block;
+    }
+
+    .dropdown-content a {
+      color: #333;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      border-radius: 5px;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #ddd;
+    }
+
+    .user-management {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 50px;
+      margin-top: 30px;
+    }
+
+    .user-management h2 {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #007bff;
+    }
+
+    .user-table {
+      width: 80%;
+      border-collapse: collapse;
+      background-color: #fff;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 15px;
+      margin-bottom: 30px;
+    }
+
+    .user-table th, .user-table td {
+      padding: 15px;
+      text-align: center;
+      font-size: 1.1em;
+    }
+
+    .user-table th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .user-table tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    .user-table tr:hover {
+      background-color: #e0e0e0;
+    }
+
+    .user-table td button {
+      background-color: #ffde59;
+      color: #333;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .user-table td button:hover {
+      background-color: #ffbc00;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      background-color: #007bff;
+      color: rgb(255, 255, 255);
+      font-size: 1em;
+    }
+    /* Search Bar & Menu */
+    .search-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 20px;
+        position: relative;
+      }
+
+      .menu-button {
+        font-size: 1em;
+        color: #007bff;
+        cursor: pointer;
+        background: none;
+        border: none;
+        outline: none;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+      }
+
+      .menu-button:hover {
+        background-color: #007bff;
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0px 4px 10px rgba(0, 123, 255, 0.4);
+      }
+
+      .menu-list {
+        position: absolute;
+        top: 50px;
+        left: 20px;
+        background: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 10px 0;
+        display: none;
+        width: 200px;
+        z-index: 1000;
+      }
+
+      .menu-list li {
+        list-style: none;
+        padding: 10px 20px;
+        border-bottom: 1px solid #ddd;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .menu-list li:hover {
+        background-color: #f0f0f0;
+      }
+
+      .search-bar {
+        display: flex;
+        flex: 1;
+        max-width: 60%;
+        margin-left: 20px;
+      }
+
+      .search-bar input {
+        width: 100%;
+        padding: 10px 15px;
+        border: 2px solid #ccc;
+        border-radius: 30px 0 0 30px;
+        font-size: 1em;
+        outline: none;
+        transition: border-color 0.3s ease;
+      }
+
+      .search-bar input:focus {
+        border-color: #007bff;
+      }
+
+      .search-bar button {
+        background-color: #007bff;
+        border: none;
+        border-radius: 0 30px 30px 0;
+        padding: 10px 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s ease;
+      }
+
+      .search-bar button img {
+        width: 20px;
+        height: 20px;
+      }
+
+      .search-bar button:hover {
+        background-color: #0056b3;
+      }
+      /* Header Right for Language and Facebook */
+      .header-right {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .lang-switch {
+        cursor: pointer;
+        background: white;
+        border: 2px solid #007bff;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 1em;
+        font-weight: bold;
+        color: #007bff;
+        transition: all 0.3s ease;
+      }
+
+      .lang-switch:hover {
+        background: #007bff;
+        color: white;
+      }
+
+      .fb-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: transform 0.3s, background-color 0.3s;
+      }
+
+      .fb-button:hover {
+        transform: scale(1.1);
+        background: #007bff;
+      }
+
+      .fb-button img {
+        width: 20px;
+        height: 20px;
+      }
+    /* Modal */
+    #addTutorModal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    #addTutorModal input {
+      margin-bottom: 10px;
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
+      <!-- Menu góc trái -->
+      <button id="menuToggle" style="background: none; border: none; cursor: pointer; color: white; font-size: 1.5em;">
+        ☰
+      </button>
+
+      <!-- Tiêu đề trung tâm -->
+      <h1 style="flex-grow: 1; text-align: center; color: white; margin: 0;">Quản Lý Người Dùng</h1>
+
+      <!-- Search Bar -->
+      <div class="search-container">
+        <div class="search-bar">
+          <input
+            type="text"
+            id="searchBar"
+            placeholder="Tìm kiếm..."
+            oninput="filterUsers()"
+          />
+          <button onclick="searchUsers()">
+            <img src="https://img.icons8.com/ios/452/search.png" alt="search icon"/>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Thanh điều hướng -->
+    <nav>
+      <ul>
+        <li>
+          <a href="#">Quản Lý Tài Khoản</a>
+          <div class="dropdown-content">
+            <a href="tkgiasu.html" onclick="openTutorModal()">Tài Khoản Gia Sư</a>
+            <a href="tkhocvien.html" onclick="displayTutors()">Tài Khoản Học Viên</a>
+          </div>
+        </li>
+        <li>
+          <a href="quanlynguoidung.html">Quản Lý Nguời Dùng</a>
+        </li>
+        <li>
+          <a href="quanlykhoahoc.html">Quản Lý Khóa Học</a>
+        </li>
+        <li>
+          <a href="thunhap.html">Quản Lý Tài Chính</a>
+        </li>
+        <li>
+          <a href="hotrokn.html">Quản Lý Khiếu Nại Và Hỗ Trợ</a>
+        </li>
+        <li>
+          <a href="kiemduyetnd.html">Quản Lý Kiểm Duyệt Nội Dung</a>
+        </li>
+        <li>
+          <a href="danhgia.html">Quản Lý Đánh Giá</a>
+        </li>
+        <li>
+          <a href="#">Hợp Đồng Điện Tử</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <script>
+    let tutors = [];
+
+    function displayTutors() {
+      const tableBody = document.getElementById("tutorTableBody");
+      tableBody.innerHTML = "";
+
+      tutors.forEach((tutor, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${tutor.name}</td>
+          <td>${tutor.email}</td>
+          <td>${tutor.specialty}</td>
+          <td>${tutor.experience} năm</td>
+          <td>
+            <button onclick="editTutor(${index})">Sửa</button>
+            <button onclick="deleteTutor(${index})">Xóa</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    function openTutorModal() {
+      document.getElementById("addTutorModal").style.display = "block";
+    }
+
+    function closeTutorModal() {
+      document.getElementById("addTutorModal").style.display = "none";
+    }
+
+    function editTutor(index) {
+      const tutor = tutors[index];
+      const newName = prompt("Sửa tên:", tutor.name);
+      const newSpecialty = prompt("Sửa chuyên môn:", tutor.specialty);
+      const newExperience = prompt("Sửa kinh nghiệm:", tutor.experience);
+
+      if (newName && newSpecialty && newExperience) {
+        tutor.name = newName;
+        tutor.specialty = newSpecialty;
+        tutor.experience = newExperience;
+        displayTutors();
+      }
+    }
+
+    function deleteTutor(index) {
+      if (confirm("Bạn có chắc chắn muốn xóa gia sư này?")) {
+        tutors.splice(index, 1);
+        displayTutors();
+      }
+    }
+  </script>
+
+  <footer>
+    © 2024 Quản Lý Dịch Vụ Gia Sư. Tất cả các quyền được bảo lưu.
+  </footer>
+    <script>
+      // Hàm lọc người dùng theo tìm kiếm
+    function filterUsers() {
+      const searchValue = document.getElementById("searchBar").value.toLowerCase();
+      const filteredUsers = users.filter(user => 
+        user.name.toLowerCase().includes(searchValue) ||
+        user.email.toLowerCase().includes(searchValue)
+      );
+      displayUsers(filteredUsers);
+    }
+
+    // Hiển thị danh sách người dùng
+    function displayUsers(filteredUsers) {
+      const tableBody = document.getElementById("userTableBody");
+      tableBody.innerHTML = "";
+      filteredUsers.forEach((user, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td>${user.role}</td>
+          <td>
+            <button onclick="editUser(${index})">Sửa</button>
+            <button onclick="deleteUser(${index})">Xóa</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Chức năng tìm kiếm
+    function searchUsers() {
+      const searchValue = document.getElementById("searchBar").value.toLowerCase();
+      const filteredUsers = users.filter(user => 
+        user.name.toLowerCase().includes(searchValue) ||
+        user.email.toLowerCase().includes(searchValue)
+      );
+      displayUsers(filteredUsers);
+    }
+
+    // Hàm chỉnh sửa người dùng
+    function editUser(index) {
+      const user = users[index];
+      const newName = prompt("Sửa tên người dùng:", user.name);
+      if (newName) {
+        user.name = newName;
+        displayUsers(users);
+      }
+    }
+
+    // Hàm xóa người dùng
+    function deleteUser(index) {
+      if (confirm("Bạn có chắc chắn muốn xóa người dùng này?")) {
+        users.splice(index, 1);
+        displayUsers(users);
+      }
+    }
+
+    // Hiển thị danh sách người dùng ban đầu
+    displayUsers(users);
+    </script>
+  </body>
+</html>

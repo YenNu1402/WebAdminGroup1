@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Tài Khoản Học Viên</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+
+    header {
+      background-color: #007bff;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    table th {
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    table tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .btn {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .btn-add {
+      background-color: #28a745;
+      color: #fff;
+      margin-bottom: 15px;
+    }
+
+    .btn-add:hover {
+      background-color: #218838;
+    }
+
+    .btn-edit {
+      background-color: #ffc107;
+      color: #fff;
+    }
+
+    .btn-edit:hover {
+      background-color: #e0a800;
+    }
+
+    .btn-delete {
+      background-color: #dc3545;
+      color: #fff;
+    }
+
+    .btn-delete:hover {
+      background-color: #c82333;
+    }
+    .back-btn-container button {
+    background-color: #007bff; /* Màu xanh nước biển */
+    color: #fff; /* Màu chữ trắng */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    }
+
+    .back-btn-container button:hover {
+    background-color: #0056b3; /* Màu xanh nước biển đậm hơn khi hover */
+    }
+
+    .back-btn-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    }
+
+    .back-btn-container button {
+    background-color: #007bff; /* Màu xanh nước biển */
+    color: #fff; /* Màu chữ trắng */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    }
+
+    .back-btn-container button:hover {
+    background-color: #0056b3; /* Màu xanh nước biển đậm hơn khi hover */
+    }
+    .form-container {
+      display: none;
+      margin-bottom: 20px;
+    }
+
+    .form-container form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .form-container input, .form-container select {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .form-container button {
+      padding: 10px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .form-container button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Quản Lý Tài Khoản Học Viên</h1>
+  </header>
+
+  <div class="container">
+    <button class="btn btn-add" onclick="showForm()">Thêm Học Viên</button>
+
+    <div class="form-container" id="formContainer">
+      <form id="studentForm">
+        <input type="hidden" id="editIndex" value="">
+        <input type="text" id="studentId" placeholder="ID Học Viên" required />
+        <input type="text" id="studentName" placeholder="Tên Học Viên" required />
+        <input type="email" id="studentEmail" placeholder="Email" required />
+        <input type="text" id="studentPhone" placeholder="Số Điện Thoại" required />
+        <button type="submit">Lưu Học Viên</button>
+      </form>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Tên Học Viên</th>
+          <th>Email</th>
+          <th>Số Điện Thoại</th>
+          <th>Hành Động</th>
+        </tr>
+      </thead>
+      <tbody id="studentList">
+        <!-- Dữ liệu học viên -->
+      </tbody>
+    </table>
+    <div class="back-btn-container">
+        <button onclick="window.location.href='indexadmin.html'">Trở Về Trang Chính</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const studentListEl = document.getElementById("studentList");
+    const formContainer = document.getElementById("formContainer");
+    const studentForm = document.getElementById("studentForm");
+
+    function displayStudents() {
+      const students = JSON.parse(localStorage.getItem("students")) || [];
+      studentListEl.innerHTML = students.length
+        ? students.map((student, index) => `
+            <tr>
+              <td>${student.id}</td>
+              <td>${student.name}</td>
+              <td>${student.email}</td>
+              <td>${student.phone}</td>
+              <td>
+                <button class="btn btn-edit" onclick="editStudent(${index})">Sửa</button>
+                <button class="btn btn-delete" onclick="deleteStudent(${index})">Xóa</button>
+              </td>
+            </tr>
+          `).join("")
+        : `<tr><td colspan="5">Chưa có học viên nào.</td></tr>`;
+    }
+
+    function showForm(editIndex = null) {
+      formContainer.style.display = "block";
+      if (editIndex !== null) {
+        const students = JSON.parse(localStorage.getItem("students")) || [];
+        const student = students[editIndex];
+        document.getElementById("editIndex").value = editIndex;
+        document.getElementById("studentId").value = student.id;
+        document.getElementById("studentName").value = student.name;
+        document.getElementById("studentEmail").value = student.email;
+        document.getElementById("studentPhone").value = student.phone;
+      } else {
+        studentForm.reset();
+        document.getElementById("editIndex").value = "";
+      }
+    }
+
+    studentForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const id = document.getElementById("studentId").value;
+      const name = document.getElementById("studentName").value;
+      const email = document.getElementById("studentEmail").value;
+      const phone = document.getElementById("studentPhone").value;
+
+      const students = JSON.parse(localStorage.getItem("students")) || [];
+      const editIndex = document.getElementById("editIndex").value;
+
+      if (editIndex) {
+        students[editIndex] = { id, name, email, phone };
+      } else {
+        students.push({ id, name, email, phone });
+      }
+
+      localStorage.setItem("students", JSON.stringify(students));
+      formContainer.style.display = "none";
+      displayStudents();
+    });
+
+    function editStudent(index) {
+      showForm(index);
+    }
+
+    function deleteStudent(index) {
+      const students = JSON.parse(localStorage.getItem("students")) || [];
+      if (confirm("Bạn có chắc muốn xóa?")) {
+        students.splice(index, 1);
+        localStorage.setItem("students", JSON.stringify(students));
+        displayStudents();
+      }
+    }
+
+    displayStudents();
+  </script>
+</body>
+</html>

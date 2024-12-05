@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sửa Gia Sư</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Phần CSS không thay đổi */
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+
+    header {
+      background: linear-gradient(135deg, #007bff, #00c6ff);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .form-container {
+      width: 80%;
+      max-width: 600px;
+      margin: 50px auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+
+    .form-container button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.1em;
+      cursor: pointer;
+    }
+
+    .form-container button:hover {
+      background-color: #0056b3;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      background-color: #007bff;
+      color: rgb(255, 255, 255);
+      font-size: 1em;
+    }
+
+    .back-btn-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .back-btn-container button {
+      padding: 12px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .back-btn-container button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Sửa Gia Sư</h1>
+  </header>
+
+  <div class="form-container">
+    <h2>Thông Tin Gia Sư</h2>
+    <form id="editTutorForm">
+      <label for="tutorName">Tên:</label>
+      <input type="text" id="tutorName" required />
+
+      <label for="tutorEmail">Email:</label>
+      <input type="email" id="tutorEmail" required />
+
+      <label for="tutorSpecialty">Chuyên Môn:</label>
+      <input type="text" id="tutorSpecialty" required />
+
+      <label for="tutorExperience">Kinh Nghiệm (năm):</label>
+      <input type="number" id="tutorExperience" required />
+
+      <button type="submit">Lưu Thay Đổi</button>
+    </form>
+  </div>
+
+  <div class="back-btn-container">
+    <button onclick="window.location.href='danhsach.html'">Quay lại danh sách gia sư</button>
+  </div>
+
+  <footer>
+    © 2024 Quản Lý Dịch Vụ Gia Sư. Tất cả các quyền được bảo lưu.
+  </footer>
+
+  <script>
+    // Lấy thông tin gia sư cần sửa từ localStorage
+    const tutors = JSON.parse(localStorage.getItem('tutors')) || [];
+    const tutorIndex = new URLSearchParams(window.location.search).get('index'); // Lấy index gia sư từ URL
+
+    // Kiểm tra nếu không có index thì hiển thị thông báo lỗi
+    if (tutorIndex === null || tutorIndex < 0 || tutorIndex >= tutors.length) {
+      alert("Không tìm thấy gia sư cần sửa.");
+      window.location.href = 'danhsach.html'; // Quay lại trang danh sách gia sư nếu không có index hợp lệ
+    } else {
+      const tutor = tutors[tutorIndex];
+
+      // Điền thông tin gia sư vào các trường
+      document.getElementById('tutorName').value = tutor.name;
+      document.getElementById('tutorEmail').value = tutor.email;
+      document.getElementById('tutorSpecialty').value = tutor.specialty;
+      document.getElementById('tutorExperience').value = tutor.experience;
+    }
+
+    // Xử lý khi form được gửi
+    document.getElementById('editTutorForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Lấy giá trị từ các trường thông tin gia sư
+      const name = document.getElementById('tutorName').value;
+      const email = document.getElementById('tutorEmail').value;
+      const specialty = document.getElementById('tutorSpecialty').value;
+      const experience = document.getElementById('tutorExperience').value;
+
+      // Cập nhật gia sư trong mảng
+      tutors[tutorIndex] = { name, email, specialty, experience };
+
+      // Lưu lại danh sách gia sư vào localStorage
+      localStorage.setItem('tutors', JSON.stringify(tutors));
+
+      alert('Thông tin gia sư đã được cập nhật!');
+      window.location.href = 'danhsach.html'; // Quay lại trang danh sách gia sư
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Đánh Giá</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+
+    header {
+      background-color: #007bff;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .filter-container {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .filter-container select {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    table th {
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    table tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .btn {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .btn-add {
+      background-color: #28a745;
+      color: #fff;
+    }
+
+    .btn-add:hover {
+      background-color: #218838;
+    }
+
+    .btn-edit {
+      background-color: #ffc107;
+      color: #fff;
+    }
+
+    .btn-edit:hover {
+      background-color: #e0a800;
+    }
+
+    .btn-delete {
+      background-color: #dc3545;
+      color: #fff;
+    }
+
+    .btn-delete:hover {
+      background-color: #c82333;
+    }
+
+    .back-btn-container button {
+    background-color: #007bff; /* Màu xanh nước biển */
+    color: #fff; /* Màu chữ trắng */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    }
+
+    .back-btn-container button:hover {
+    background-color: #0056b3; /* Màu xanh nước biển đậm hơn khi hover */
+    }
+
+    .back-btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+    .back-btn-container button {
+    background-color: #007bff; /* Màu xanh nước biển */
+    color: #fff; /* Màu chữ trắng */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    }
+
+    .back-btn-container button:hover {
+    background-color: #0056b3; /* Màu xanh nước biển đậm hơn khi hover */
+    }
+
+    .form-container {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .form-container input,
+    .form-container textarea,
+    .form-container select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    /* Hiệu ứng cho các ngôi sao khi hover */
+    .star-rating {
+      font-size: 20px;
+      color: #ddd;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .star-rating:hover {
+      color: #f39c12; /* Màu vàng khi hover */
+    }
+
+    .star-rating.selected {
+      color: #f39c12; /* Màu vàng khi chọn */
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Quản Lý Đánh Giá</h1>
+  </header>
+
+  <div class="container">
+    <div class="filter-container">
+      <select id="roleFilter" onchange="applyFilters()">
+        <option value="">Tất Cả Vai Trò</option>
+        <option value="Học Viên">Học Viên</option>
+        <option value="Gia Sư">Gia Sư</option>
+      </select>
+      <select id="ratingFilter" onchange="applyFilters()">
+        <option value="">Tất Cả Xếp Hạng</option>
+        <option value="1">1 ★</option>
+        <option value="2">2 ★</option>
+        <option value="3">3 ★</option>
+        <option value="4">4 ★</option>
+        <option value="5">5 ★</option>
+      </select>
+    </div>
+
+    <button class="btn btn-add" onclick="showForm()">Thêm Đánh Giá</button>
+
+    <div class="form-container" id="formContainer">
+      <h3 id="formTitle">Thêm Đánh Giá</h3>
+      <input type="text" id="reviewer" placeholder="Tên người đánh giá" required />
+      <select id="role" required>
+        <option value="Học Viên">Học Viên</option>
+        <option value="Gia Sư">Gia Sư</option>
+      </select>
+      <input type="text" id="target" placeholder="Tên đối tượng" required />
+      <textarea id="comment" placeholder="Nhận xét" required></textarea>
+      <select id="rating" required>
+        <option value="1">1 ★</option>
+        <option value="2">2 ★</option>
+        <option value="3">3 ★</option>
+        <option value="4">4 ★</option>
+        <option value="5">5 ★</option>
+      </select>
+      <button class="btn btn-add" onclick="saveReview()">Lưu</button>
+      <button class="btn btn-delete" onclick="cancelForm()">Hủy</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Tên Người Đánh Giá</th>
+          <th>Vai Trò</th>
+          <th>Đối Tượng</th>
+          <th>Đánh Giá</th>
+          <th>Xếp Hạng</th>
+          <th>Hành Động</th>
+        </tr>
+      </thead>
+      <tbody id="reviewList">
+        <!-- Dữ liệu đánh giá -->
+      </tbody>
+    </table>
+    <div class="back-btn-container">
+        <button onclick="window.location.href='indexadmin.html'">Trở Về Trang Chính</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let reviews = [
+      { id: 1, reviewer: "Nguyễn Văn A", role: "Học Viên", target: "Trần Gia Sư", comment: "Rất tốt!", rating: 5 },
+      { id: 2, reviewer: "Lê Thị B", role: "Gia Sư", target: "Nguyễn Học Viên", comment: "Học viên chăm chỉ.", rating: 4 },
+      { id: 3, reviewer: "Phạm Văn C", role: "Học Viên", target: "Hoàng Gia Sư", comment: "Bình thường.", rating: 3 },
+      { id: 4, reviewer: "Trần Thị D", role: "Gia Sư", target: "Lê Thị E", comment: "Rất nhiệt tình và hiểu biết.", rating: 5 },
+      { id: 5, reviewer: "Nguyễn Minh F", role: "Học Viên", target: "Trần Gia Sư", comment: "Giảng dạy rất dễ hiểu, sẽ học tiếp!", rating: 5 },
+      { id: 6, reviewer: "Lê Thanh G", role: "Gia Sư", target: "Phạm Hồng H", comment: "Học viên học tập nghiêm túc, có tiến bộ nhanh.", rating: 4 },
+      { id: 7, reviewer: "Hoàng Anh I", role: "Học Viên", target: "Nguyễn Văn J", comment: "Cần cải thiện phương pháp giảng dạy.", rating: 2 },
+      { id: 8, reviewer: "Phạm Minh K", role: "Gia Sư", target: "Lê Hương L", comment: "Tốt, có khả năng tiếp thu bài nhanh.", rating: 4 },
+      { id: 9, reviewer: "Trần Thanh M", role: "Học Viên", target: "Nguyễn Gia O", comment: "Giảng dạy tốt nhưng cần thêm ví dụ thực tế.", rating: 4 },
+      { id: 10, reviewer: "Nguyễn Hải P", role: "Gia Sư", target: "Trần Minh Q", comment: "Học viên đôi khi thiếu kiên nhẫn, nhưng có tiềm năng.", rating: 3 },
+      { id: 11, reviewer: "Lê Anh R", role: "Học Viên", target: "Phạm Thanh S", comment: "Giảng viên rất nhiệt huyết, dễ tiếp thu.", rating: 5 },
+      { id: 12, reviewer: "Trần Thị T", role: "Gia Sư", target: "Lê Minh U", comment: "Học viên cần cải thiện kỹ năng nghe nói.", rating: 3 },
+      { id: 13, reviewer: "Nguyễn Văn V", role: "Học Viên", target: "Trần Hữu W", comment: "Được giảng dạy rất dễ hiểu và bài bản.", rating: 5 },
+      { id: 14, reviewer: "Lê Thị X", role: "Gia Sư", target: "Nguyễn Hữu Y", comment: "Rất phù hợp với nhu cầu học tập của học viên.", rating: 4 },
+      { id: 15, reviewer: "Hoàng Thanh Z", role: "Học Viên", target: "Lê Minh AA", comment: "Tôi sẽ tiếp tục học thêm các khóa học khác từ gia sư này.", rating: 5 }
+  ];
+
+    let editIndex = null;
+
+    const reviewList = document.getElementById("reviewList");
+    const formContainer = document.getElementById("formContainer");
+
+
+    function displayReviews(filteredReviews) {
+      reviewList.innerHTML = filteredReviews.map((review, index) => `
+        <tr>
+          <td>${review.id}</td>
+          <td>${review.reviewer}</td>
+          <td>${review.role}</td>
+          <td>${review.target}</td>
+          <td>${review.comment}</td>
+          <td>${review.rating} ★</td>
+          <td>
+            <button class="btn btn-edit" onclick="editReview(${index})">Sửa</button>
+            <button class="btn btn-delete" onclick="deleteReview(${index})">Xóa</button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function applyFilters() {
+      const roleFilter = document.getElementById("roleFilter").value;
+      const ratingFilter = document.getElementById("ratingFilter").value;
+
+      const filteredReviews = reviews.filter(review => {
+        const matchesRole = roleFilter ? review.role === roleFilter : true;
+        const matchesRating = ratingFilter ? review.rating === parseInt(ratingFilter) : true;
+        return matchesRole && matchesRating;
+      });
+
+      displayReviews(filteredReviews);
+    }
+
+    function deleteReview(index) {
+      if (confirm("Bạn có chắc muốn xóa đánh giá này?")) {
+        reviews.splice(index, 1);
+        applyFilters();
+      }
+    }
+
+    function showForm() {
+      formContainer.style.display = 'block';
+      document.getElementById("formTitle").textContent = "Thêm Đánh Giá";
+      document.getElementById("reviewer").value = '';
+      document.getElementById("role").value = 'Học Viên';
+      document.getElementById("target").value = '';
+      document.getElementById("comment").value = '';
+      document.getElementById("rating").value = '1';
+      editIndex = null;
+    }
+
+    function editReview(index) {
+      const review = reviews[index];
+      document.getElementById("formTitle").textContent = "Sửa Đánh Giá";
+      document.getElementById("reviewer").value = review.reviewer;
+      document.getElementById("role").value = review.role;
+      document.getElementById("target").value = review.target;
+      document.getElementById("comment").value = review.comment;
+      document.getElementById("rating").value = review.rating;
+      formContainer.style.display = 'block';
+      editIndex = index;
+    }
+
+    function saveReview() {
+      const reviewer = document.getElementById("reviewer").value;
+      const role = document.getElementById("role").value;
+      const target = document.getElementById("target").value;
+      const comment = document.getElementById("comment").value;
+      const rating = parseInt(document.getElementById("rating").value);
+
+      if (editIndex !== null) {
+        reviews[editIndex] = { id: reviews[editIndex].id, reviewer, role, target, comment, rating };
+      } else {
+        const newId = reviews.length ? reviews[reviews.length - 1].id + 1 : 1;
+        reviews.push({ id: newId, reviewer, role, target, comment, rating });
+      }
+
+      applyFilters();
+      cancelForm();
+    }
+
+    function cancelForm() {
+      formContainer.style.display = 'none';
+    }
+
+    // Hiển thị danh sách ban đầu
+    applyFilters();
+  </script>
+</body>
+</html>

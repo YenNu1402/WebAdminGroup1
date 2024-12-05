@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Khóa Học</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    header {
+      background-color: #007bff;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    header h1 {
+      margin: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+    text-align: center;
+    color: #007bff; /* Xanh nước biển */
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    border-left: 5px solid #007bff;
+    padding-left: 10px;
+  }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px;
+    }
+
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .btn-add {
+      display: inline-block;
+      margin-bottom: 20px;
+      background-color: #007bff; /* Nền xanh nước biển */
+      color: white;             /* Chữ trắng */
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .btn-add:hover {
+      background-color: #0056b3; /* Đổi màu khi hover */
+    }
+
+    .back-btn-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .back-btn-container button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .back-btn-container button:hover {
+      background-color: #0056b3;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px 0;
+      background-color: #007bff;
+      color: white;
+      margin-top: 20px;
+    }
+
+    .action-btn {
+      padding: 5px 10px;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .edit-btn {
+      background-color: #28a745;
+    }
+
+    .delete-btn {
+      background-color: #dc3545;
+    }
+
+    .edit-btn:hover {
+      background-color: #218838;
+    }
+
+    .delete-btn:hover {
+      background-color: #c82333;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Quản Lý Khóa Học</h1>
+  </header>
+
+  <div class="container">
+    <h2>Danh Sách Khóa Học</h2>
+    <!-- Nút thêm khóa học -->
+    <a href="addkhoahoc.html" class="btn-add">Thêm Khóa Học</a>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Tên Khóa Học</th>
+          <th>Mô Tả</th>
+          <th>Giảng Viên</th>
+          <th>Thời Lượng</th>
+          <th>Số Lượng Học Viên</th>
+          <th>Thời Gian</th>
+          <th>Giá</th>
+          <th>Hành Động</th>
+        </tr>
+      </thead>
+      <tbody id="courseTableBody">
+        <!-- Dữ liệu khóa học sẽ được thêm vào đây -->
+      </tbody>
+    </table>
+
+    <div class="back-btn-container">
+      <button onclick="window.location.href='indexadmin.html'">Trở Về Trang Chính</button>
+    </div>
+  </div>
+
+  <footer>
+    © 2024 Trang Quản Lý Khóa Học. Tất cả các quyền được bảo lưu.
+  </footer>
+
+  <script>
+    // Lấy danh sách khóa học từ localStorage
+    const storedCourses = JSON.parse(localStorage.getItem('courses')) || [];
+
+    // Hiển thị dữ liệu khóa học
+    const courseTableBody = document.getElementById("courseTableBody");
+
+    function renderCourses() {
+      courseTableBody.innerHTML = ""; // Xóa nội dung cũ
+      storedCourses.forEach((course, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${course.name}</td>
+          <td>${course.description}</td>
+          <td>${course.instructor}</td>
+          <td>${course.duration}</td>
+          <td>${course.capacity}</td>
+          <td>${course.startDate} - ${course.endDate}</td>
+          <td>${new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(course.price)}</td>
+          <td>
+            <button class="action-btn edit-btn" onclick="editCourse(${index})">Sửa</button>
+            <button class="action-btn delete-btn" onclick="deleteCourse(${index})">Xóa</button>
+          </td>
+        `;
+        courseTableBody.appendChild(row);
+      });
+    }
+
+    // Xóa khóa học
+    function deleteCourse(index) {
+      if (confirm("Bạn có chắc chắn muốn xóa khóa học này không?")) {
+        storedCourses.splice(index, 1); // Xóa khóa học khỏi mảng
+        localStorage.setItem('courses', JSON.stringify(storedCourses)); // Cập nhật localStorage
+        renderCourses(); // Cập nhật lại giao diện
+        alert("Khóa học đã được xóa thành công.");
+      }
+    }
+
+    // Sửa khóa học
+    function editCourse(index) {
+      localStorage.setItem('editCourseIndex', index); // Lưu chỉ số khóa học cần sửa
+      window.location.href = 'editkhoahoc.html'; // Chuyển hướng đến trang sửa khóa học
+    }
+
+    // Render dữ liệu khóa học ban đầu
+    renderCourses();
+  </script>
+</body>
+</html>
